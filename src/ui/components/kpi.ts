@@ -165,9 +165,10 @@ function createKPI(props: KPIProps): string {
     ? `<p class="text-sm font-medium text-muted-foreground mb-1">${props.title}</p>`
     : '';
 
-  const valueHtml = props.value !== undefined
-    ? `<h3 class="text-2xl font-bold text-foreground">${props.value}</h3>`
-    : '';
+  const valueHtml =
+    props.value !== undefined
+      ? `<h3 class="text-2xl font-bold text-foreground">${props.value}</h3>`
+      : '';
 
   const descriptionHtml = props.description
     ? `<p class="text-xs text-muted-foreground mt-1">${props.description}</p>`
@@ -205,4 +206,3 @@ function createKPI(props: KPIProps): string {
 }
 
 export { kpiVariants, createKPI };
-

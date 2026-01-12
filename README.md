@@ -1067,6 +1067,15 @@ The variant definitions and utility functions remain identical!
    - No JavaScript execution required
    - Faster indexing
 
+4. **Highly cacheable by browsers and CDNs**
+   - Static HTML responses can be cached effectively
+   - CDNs can serve cached content closer to users
+   - Reduces server load and improves response times
+   - Works well with HTTP caching headers (Cache-Control, ETag)
+
+> [!WARNING]
+> **Cache Headers**: Incorrectly configured cache headers can be dangerous. Avoid caching sensitive pages (e.g., user-specific content) or use appropriate cache-control directives. Public caching of private data can lead to security vulnerabilities where one user's data is served to another user.
+
 ### Optimization Tips
 
 **1. CSS Optimization**
