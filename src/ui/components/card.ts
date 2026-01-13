@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn, createAttributesStringified } from 'src/ui/utils/utils';
+import { cn, createAttributesStringified } from '../utils/utils';
 
 const cardVariants = cva(
   'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border shadow-sm',
@@ -282,3 +282,4 @@ export {
   createCardHeader,
   createCardTitle,
 };
+

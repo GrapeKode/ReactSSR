@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn, createAttributesStringified } from 'src/ui/utils/utils';
+import { cn, createAttributesStringified } from '../utils/utils';
 
 /**
  * Input component variants using Class Variance Authority (CVA)
@@ -128,3 +128,4 @@ function createInput(props: InputProps) {
 }
 
 export { createInput, inputVariants };
+
