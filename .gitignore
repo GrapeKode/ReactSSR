@@ -73,3 +73,6 @@ sessions/
 *.bak
 *.backup
 *~
+
+# Secret key
+secret-key

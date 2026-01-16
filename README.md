@@ -140,50 +140,7 @@ Our implementation uses a carefully selected stack that balances performance, de
 
 Understanding the high-level architecture will help you see how all the pieces fit together.
 
-```mermaid
-graph TB
-    Client[Browser Client]
-    
-    subgraph NestApp ["NestJS Application"]
-        Controller["Controller<br/>@Render decorator"]
-        ViewEngine["Fastify View Engine<br/>Handlebars"]
-        
-        subgraph UIMod ["UI Module"]
-            Helpers["Handlebars Helpers<br/>Registered Components"]
-            Components["Component Functions<br/>button, input, card, etc."]
-            Utils["Utilities<br/>cn, createAttributes"]
-        end
-        
-        Templates["HBS Templates<br/>sign-in.hbs, dashboard.hbs"]
-        Static["Static Assets<br/>styles.css"]
-    end
-    
-    subgraph BuildProc ["Build Process"]
-        TailwindCLI["Tailwind CLI"]
-        GlobalCSS["globals.css"]
-        CompiledCSS["styles.css"]
-    end
-    
-    Client -->|HTTP Request| Controller
-    Controller -->|Data + Template Name| ViewEngine
-    ViewEngine -->|Renders| Templates
-    Templates -->|Uses| Helpers
-    Helpers -->|Calls| Components
-    Components -->|Uses| Utils
-    ViewEngine -->|HTML Response| Client
-    Client -->|Loads| Static
-    
-    GlobalCSS -->|Compiles| TailwindCLI
-    TailwindCLI -->|Generates| CompiledCSS
-    CompiledCSS -->|Copied to| Static
-    
-    style Helpers fill:#e1f5ff
-    style Components fill:#e1f5ff
-    style Utils fill:#e1f5ff
-    style TailwindCLI fill:#fff4e1
-    style GlobalCSS fill:#fff4e1
-    style CompiledCSS fill:#fff4e1
-```
+![Diagram](architecture-overview-diagram.png)
 
 ### Request Flow
 
@@ -346,7 +303,7 @@ bootstrap();
 
 **Configure Asset Copying**
 
-NestJS doesn't copy arbitrary folders into the `dist` directory by default. Update `nest-cli.json` to include `public` and `views`:
+NestJS doesn't copy arbitrary folders into the `dist` directory by default. Update `nest-cli.json` to include `public`, `views` and `secret-key` file (more on this later):
 
 ```json
 {
@@ -364,6 +321,11 @@ NestJS doesn't copy arbitrary folders into the `dist` directory by default. Upda
       {
         "include": "../views",
         "outDir": "dist/views",
+        "watchAssets": true
+      },
+      {
+        "include": "../secret-key",
+        "outDir": "dist/secret-key",
         "watchAssets": true
       }
     ]
@@ -1161,20 +1123,26 @@ Use secure session handling:
 npm install @fastify/secure-session
 ```
 
+Create a secret-key file using:
+
+```bash
+npx --yes @fastify/secure-session > secret-key
+```
+
 ```typescript
 import fastifySecureSession from '@fastify/secure-session';
 
-// Generate a secret key (32 bytes recommended)
-const secretKey = process.env.SESSION_SECRET || 'your-secret-key-here-32-chars-min';
-const secret = Buffer.from(secretKey, 'utf-8');
-
+// 0. Register secure session plugin (must be before other plugins)
 await app.register(fastifySecureSession, {
-  key: secret, // 32-byte key for encryption
+  key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+  sessionName: 'session',
+  cookieName: 'my-session-cookie',
+  expiry: 24 * 60 * 60, // 1 day
   cookie: {
     path: '/',
-    httpOnly: true,  // Prevent XSS
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: 'lax', // CSRF protection
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7, // 7 days
   },
 });

@@ -8,6 +8,8 @@ import {
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as handlebars from 'handlebars';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -18,13 +20,11 @@ async function bootstrap() {
   );
 
   // 0. Register secure session plugin (must be before other plugins)
-  // Generate a secret key for session encryption (in production, use environment variable)
-  const secretKey =
-    process.env.SESSION_SECRET || 'your-secret-key-here-32-chars-min';
-  const secret = Buffer.from(secretKey, 'utf-8');
-
   await app.register(fastifySecureSession, {
-    key: secret,
+    key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+    sessionName: 'session',
+    cookieName: 'my-session-cookie',
+    expiry: 24 * 60 * 60, // 1 day
     cookie: {
       path: '/',
       httpOnly: true,

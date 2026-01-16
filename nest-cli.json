@@ -14,6 +14,11 @@
         "include": "../views",
         "outDir": "dist/views",
         "watchAssets": true
+      },
+      {
+        "include": "../secret-key",
+        "outDir": "dist/secret-key",
+        "watchAssets": true
       }
     ]
   }

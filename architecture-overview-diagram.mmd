@@ -1,0 +1,42 @@
+graph TB
+Client[Browser Client]
+
+    subgraph NestApp ["NestJS Application"]
+        Controller["Controller<br/>@Render decorator"]
+        ViewEngine["Fastify View Engine<br/>Handlebars"]
+
+        subgraph UIMod ["UI Module"]
+            Helpers["Handlebars Helpers<br/>Registered Components"]
+            Components["Component Functions<br/>button, input, card, etc."]
+            Utils["Utilities<br/>cn, createAttributes"]
+        end
+
+        Templates["HBS Templates<br/>sign-in.hbs, dashboard.hbs"]
+        Static["Static Assets<br/>styles.css"]
+    end
+
+    subgraph BuildProc ["Build Process"]
+        TailwindCLI["Tailwind CLI"]
+        GlobalCSS["globals.css"]
+        CompiledCSS["styles.css"]
+    end
+
+    Client -->|HTTP Request| Controller
+    Controller -->|Data + Template Name| ViewEngine
+    ViewEngine -->|Renders| Templates
+    Templates -->|Uses| Helpers
+    Helpers -->|Calls| Components
+    Components -->|Uses| Utils
+    ViewEngine -->|HTML Response| Client
+    Client -->|Loads| Static
+
+    GlobalCSS -->|Compiles| TailwindCLI
+    TailwindCLI -->|Generates| CompiledCSS
+    CompiledCSS -->|Copied to| Static
+
+    style Helpers fill:#e1f5ff
+    style Components fill:#e1f5ff
+    style Utils fill:#e1f5ff
+    style TailwindCLI fill:#fff4e1
+    style GlobalCSS fill:#fff4e1
+    style CompiledCSS fill:#fff4e1
